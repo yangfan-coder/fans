@@ -1,5 +1,5 @@
 {
-  "name": "fans",
+  "name": "fans-cli",
   "version": "1.0.0",
   "main": "index.mjs",
   "type": "module",
@@ -19,6 +19,8 @@
     "log-update": "^5.0.1",
     "node-fetch": "2.6.8",
     "progress": "^2.0.3",
+    "semver": "7.3.8",
+    "tar": "^6.2.0",
     "yargs": "17.6.2"
   }
 }

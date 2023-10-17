@@ -66,3 +66,16 @@ export async function writeLock() {
     yaml.dump(utils.sortKeys(newLock), { noRefs: true })
   );
 }
+
+/**
+ *将包的信息保存到锁中。
+ *如果锁中不存在该信息，请创建它。
+ *否则，只需更新即可。
+ */
+export function updateOrCreate(name, info) {
+  //如果锁中不存在该信息，请创建它。
+  if (!newLock[name]) {
+    newLock[name] = Object.create(null);
+  }
+  Object.assign(newLock[name], info);
+}

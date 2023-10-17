@@ -18,12 +18,12 @@ export default async function (name) {
    */
 
   const cached = cache[name];
-
   if (cached) return cached;
-
   const response = await fetch(`${REGISTRY}${name}`);
 
   const json = await response.json();
+
+ 
 
   if ("error" in json) {
     throw new ReferenceError(`No such package: ${name}`);

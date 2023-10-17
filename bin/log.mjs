@@ -21,3 +21,11 @@ export function prepareInstall(count) {
 export function logResolving(name) {
   logUpdate(`[1/2] Resolving: ${name}`);
 }
+
+/**
+ *这是为了更新进度条
+ *一旦焦油球提取完成。
+ */
+export function tickInstalling() {
+  progress.tick();
+}
