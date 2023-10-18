@@ -5,7 +5,7 @@ import findUp from "find-up";
 import * as lock from "./lock.mjs";
 import list from "./list.mjs";
 import * as log from "./log.mjs";
-import * as utils from "./utils";
+import * as utils from "./utils.mjs";
 import install from "./install.mjs";
 
 export default async function (args) {
