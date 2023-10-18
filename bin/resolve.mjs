@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-
 import fetch from "node-fetch";
 
 /*
@@ -12,23 +11,19 @@ const cache = Object.create(null);
 const REGISTRY = process.env.REGISTRY || "https://registry.npmjs.org/";
 
 export default async function (name) {
-  /*
-   *如果所请求的包清单存在于高速缓存中，
-   *直接退回即可。
-   */
 
+  // 添加缓存检查。
   const cached = cache[name];
   if (cached) return cached;
+
   const response = await fetch(`${REGISTRY}${name}`);
-
   const json = await response.json();
-
- 
 
   if ("error" in json) {
     throw new ReferenceError(`No such package: ${name}`);
   }
 
   // 将清单信息添加到缓存并返回。
-  return (cache[name] = json.versions);
+  return (cache[name] = json.versions)
+
 }

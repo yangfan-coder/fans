@@ -50,7 +50,7 @@ export async function readLock() {
       yaml.load(await fs.default.readFile("./fans.yml", "utf-8"))
     );
   } else {
-    console.log("未加载lock文件");
+    console.log("未加载「fans.yml」文件");
   }
 }
 

@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 
 import yargs from "yargs";
+import { hideBin } from 'yargs/helpers'
 import pm from "./index.mjs";
 
-yargs(process.argv)
+yargs(hideBin(process.argv))
   .usage("tiny-pm <command> [args]")
   .version()
   .alias("v", "version")

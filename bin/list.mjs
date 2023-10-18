@@ -53,14 +53,44 @@ async function collectDeps(name, constraint, stack = []) {
   const matchedManifest = manifest[matched];
 
   if (!topLevel[name]) {
-    /*
-     *如果该包不存在于“topLevel”映射中，
-     *就这么说吧。
-     */
-
+    // 如果该包不存在于“topLevel”映射中，
     topLevel[name] = { url: matchedManifest.dist.tarball, version: matched };
   } else if (semver.satisfies(topLevel[name].version, constraint)) {
+    const conflictIndex = checkStackDependencies(name, matched, stack);
+
+    // 避免依赖循环
+    if (conflictIndex === -1) return;
+
+    /*
+     *由于Node.js的模块解析算法，
+     *依赖关系的依赖关系可能存在一些冲突。
+     *如何检查？请参阅下面的“checkStackDependencies”函数。
+     *----------------------------
+     *我们只需要前面**两个**依赖项的信息
+     *具有冲突的依赖关系。
+     *：（不确定是否正确。
+     */
+
+    unsatisfied.push({
+      name,
+      parent: stack
+        .map(({ name }) => name)
+        .slice(conflictIndex - 2)
+        .join("/node_modules/"),
+      url: matchedManifest.dist.tarball,
+    });
   } else {
+    /*
+     *是的，这个包裹已经存在于地图中了，
+     *但是由于语义版本的原因，它存在冲突。
+     *所以我们应该添加一个记录。
+     */
+
+    unsatisfied.push({
+      name,
+      parent: stack.at(-1).name,
+      url: matchedManifest.dist.tarball,
+    });
   }
 
   // 别忘了收集我们依赖项的依赖项
@@ -107,6 +137,39 @@ async function collectDeps(name, constraint, stack = []) {
 }
 
 /**
+ * 此功能用于检查
+ * 依赖关系的依赖关系，而不是顶级依赖关系。
+* 
+* stack的模拟数据如下：
+
+    [{
+      name: 'string-width',
+      version: '5.1.2',
+      dependencies: {
+        eastasianwidth: '^0.2.0',
+        'emoji-regex': '^9.2.2',
+        'strip-ansi': '^7.0.1'
+      }
+    },
+    ...
+  ]
+*/
+function checkStackDependencies(name, version, stack) {
+  return stack.findIndex(({ dependencies }) => {
+    const semverRange = dependencies[name];
+    /*
+     *如果该包不是另一个包的依赖项，
+     *这是安全的，我们只返回true。
+     */
+    if (!semverRange) {
+      return true;
+    }
+
+    return semver.satisfies(version, semverRange);
+  });
+}
+
+/**
  *此函数用于检查是否存在依赖循环。
  *
  *如果堆栈中存在包并且该包满足语义版本，
@@ -119,13 +182,18 @@ function hasCirculation(name, renge, stack) {
   );
 }
 
-/*
- *对于生产依赖性和开发依赖性，
- *如果返回包名称和语义版本，
- *我们应该将它们添加到“package.json”文件中。
- *添加新程序包时，这是必要的。
+/**
+ *为了简化本指南，
+ *我们打算只支持`dependencies'和`devDependencies`字段。
  */
 export default async function (rootManifest) {
+  /*
+   *对于生产依赖性和开发依赖性，
+   *如果返回包名称和语义版本，
+   *我们应该将它们添加到“package.json”文件中。
+   *添加新程序包时，这是必要的。
+   */
+
   if (rootManifest.dependencies) {
     (
       await Promise.all(

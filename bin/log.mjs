@@ -7,7 +7,7 @@ let progress;
 
 // 使用友好的进度条。
 export function prepareInstall(count) {
-  logUpdate("[1/2] Finished resolving.");
+  logUpdate("[1/2] 已经完成解析.");
   progress = new ProgressBar("[2/2] Installing [:bar]", {
     complete: "#",
     total: count,
@@ -19,7 +19,7 @@ export function prepareInstall(count) {
  *这类似于yarn。
  */
 export function logResolving(name) {
-  logUpdate(`[1/2] Resolving: ${name}`);
+  logUpdate(`[1/2] 正在解析: ${name}`);
 }
 
 /**
