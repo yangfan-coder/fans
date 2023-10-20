@@ -1,6 +1,6 @@
 {
   "name": "fans-cli",
-  "version": "1.1.1",
+  "version": "1.1.5",
   "main": "index.mjs",
   "type": "module",
   "license": "ISC",
@@ -13,10 +13,12 @@
     "dev": "node bin/cli.mjs"
   },
   "dependencies": {
+    "axios": "^1.5.1",
+    "commander": "^11.1.0",
     "find-up": "5.0.0",
     "fs-extra": "11.1.0",
     "js-yaml": "4.1.0",
-    "log-update": "^5.0.1",
+    "log-update": "4.0.0",
     "node-fetch": "2.6.8",
     "progress": "^2.0.3",
     "semver": "7.3.8",

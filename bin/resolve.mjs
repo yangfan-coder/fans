@@ -1,5 +1,5 @@
-#!/usr/bin/env node
-import fetch from "node-fetch";
+// import fetch from "node-fetch";
+import axios from "axios";
 
 /*
  *使用缓存来防止重复的网络请求，
@@ -8,22 +8,22 @@ import fetch from "node-fetch";
 const cache = Object.create(null);
 
 // 这允许我们使用自定义的npm注册表。
-const REGISTRY = process.env.REGISTRY || "https://registry.npmjs.org/";
+const REGISTRY = process.env.REGISTRY || "https://registry.yarnpkg.com/";
 
 export default async function (name) {
-
   // 添加缓存检查。
   const cached = cache[name];
   if (cached) return cached;
 
-  const response = await fetch(`${REGISTRY}${name}`);
-  const json = await response.json();
+  // const response = await fetch(`${REGISTRY}${name}`);
+  // const json = await response.json();
+  const response = await axios.get(`${REGISTRY}${name}`);
+  const json = response.data;
 
   if ("error" in json) {
     throw new ReferenceError(`No such package: ${name}`);
   }
 
   // 将清单信息添加到缓存并返回。
-  return (cache[name] = json.versions)
-
+  return (cache[name] = json.versions);
 }

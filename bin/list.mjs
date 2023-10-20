@@ -88,7 +88,8 @@ async function collectDeps(name, constraint, stack = []) {
 
     unsatisfied.push({
       name,
-      parent: stack.at(-1).name,
+      // parent: stack.at(-1).name,
+      parent: stack[stack.length - 1].name,
       url: matchedManifest.dist.tarball,
     });
   }
